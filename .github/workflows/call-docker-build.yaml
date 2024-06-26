@@ -26,6 +26,24 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Docker build and export to docker
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          load: true
+          tags: ${{ github.run_id }}
+          target: test
+          cache-from: type=gha
+          cache-to: type=gha, mode=max
+          platforms: linux/amd64,linux/arm64
+
+      - name: Run Trivy for all CVEs (non-blocking)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ github.run_id }}
+          exit-code: 0
+          format: table
+
       - name: Docker meta
         id: docker_meta
         uses: docker/metadata-action@v5
@@ -34,17 +52,13 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=04
-            type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
-            type=ref,event=pr
-            type=ref,event=branch
-            type=semver,pattern={{version}}
+            type=raw,value=06
 
-      - name: Docker build
+      - name: Docker build and Push to Docker Hub
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ steps.docker_meta.outputs.tags}}
+          tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha, mode=max
