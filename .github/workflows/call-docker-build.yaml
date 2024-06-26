@@ -35,7 +35,7 @@ jobs:
           target: test
           cache-from: type=gha
           cache-to: type=gha, mode=max
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
       - name: Run Trivy for all CVEs (non-blocking)
         uses: aquasecurity/trivy-action@master
