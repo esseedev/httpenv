@@ -23,4 +23,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.event_name != 'pull_request '}}
-          tags: esseedev/docker-ci-automation:latest, esseedev/docker-ci-automation:01
+          tags: esseeth/docker-ci-automation:latest, esseeth/docker-ci-automation:01
